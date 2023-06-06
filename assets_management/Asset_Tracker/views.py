@@ -88,3 +88,60 @@ def create_asset_type(request):
         form = AssetTypeForm() 
     return render(request, 'create_asset_type.html', {'form': form})
 
+
+from django.shortcuts import render, redirect, get_object_or_404
+
+from .forms import AssetTypeForm, AssetForm, AssetImageForm
+
+from django.http import JsonResponse
+from django.views.generic import TemplateView
+from django_datatables_view.base_datatable_view import BaseDatatableView
+
+
+
+class AssetTypeListJson(BaseDatatableView):
+    model = AssetType
+    columns = ['id', 'asset_type', 'description', 'created_at', 'updated_at']
+    order_columns = ['id', 'asset_type', 'description', 'created_at', 'updated_at']
+    max_display_length = 10
+    def render_column(self, row, column):
+        if column == 'actions':
+            return f'<a href="#" class="delete_asset_type" data-id="{row.pk}">Delete</a>'+\
+              f'<a href="#" class="update_asset_type" data-id="{row.pk}">update    </a>' # added underscoes to delete asset type
+        else:
+            return super().render_column(row, column)
+
+    def get_initial_queryset(self):
+        return self.model.objects.all()
+
+
+class AssetTypeListView(TemplateView):  
+    template_name = 'list_asset_types.html'
+
+@login_required
+def update_asset_type(request, pk):
+    asset_type = get_object_or_404(AssetType, pk=pk)
+    if request.method == 'POST':
+        form = AssetTypeForm(request.POST, instance=asset_type)
+        if form.is_valid():
+            asset_type = form.save()
+            messages.success(request, 'Asset type updated successfully.')
+            return redirect('list_asset_types')
+    else:
+        form = AssetTypeForm(instance=asset_type)
+    return render(request, 'update_asset_type.html', {'form': form})
+
+@login_required
+def delete_asset_type(request, pk):
+    asset_type = get_object_or_404(AssetType, pk=pk)
+    if request.method == 'POST':
+        if request.POST.get('confirm') == 'yes':
+            asset_type.delete()
+            messages.success(request, 'Asset type and its assets deleted successfully.')
+        else:
+            messages.info(request, 'Asset type deletion cancelled.')
+        return redirect('list_asset_types')
+    return render(request, 'delete_asset_type.html', {'asset_type': asset_type})
+   
+
+

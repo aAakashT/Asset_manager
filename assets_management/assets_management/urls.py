@@ -23,4 +23,8 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('dashboard/', AssetChartView.as_view(), name='dashboard'),
     path('asset_types/create/', create_asset_type, name='create_asset_type'),
+    path('asset_types/data/', AssetTypeListJson.as_view(), name='asset_types_data'),
+    path('asset_types/', AssetTypeListView.as_view(), name='asset_types'),
+    path('asset_types/<int:pk>/update/', update_asset_type, name='update_asset_type'),
+    path('asset_types/<int:pk>/delete/', delete_asset_type, name='delete_asset_type'),
 ]

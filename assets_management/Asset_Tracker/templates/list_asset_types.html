@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    <title>Asset Type List</title>
+    <!-- Add your CSS and JavaScript imports here -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script> 
+
+    <table id="asset-type-table">
+        <thead>
+            <tr>
+                <th>Asset ID</th>
+                <th>Asset Type</th>
+                <th>Description</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+    </table>
+    <script>
+      $(document).ready(function() {
+          var dataTable = $('#asset-type-table').DataTable({
+          "processing": true,
+          "serverSide": true,
+          "ajax": "{% url 'asset_types_data' %}",
+          "columns": [
+            {"data": "id"},
+            { "data": "asset_type" },
+            { "data": "description" },
+            { "data": "created_at" },
+            { "data": "updated_at" },
+            {
+            "data": null,
+            "render": function(data, type, row) {
+              return '<button class="btn btn-primary update-btn" data-id="' + row.id + '">Update</button>'+
+                      '<button class="btn btn-danger delete-btn" data-id="' + row.id + '">Delete</button>';
+            }
+          },
+
+            
+        ]
+      });
+          
+        });
+// Update Asset Type
+$('#asset-type-table').on('click', '.update-btn', function() {
+        var assetId = $(this).data('id');
+        // Redirect to the update page or perform the update action as needed
+        // Example:
+        window.location.href = '/asset_types/' + assetId + '/update/';
+      });
+           
+      
+// Delete Record
+$('#asset-type-table').on('click', '.delete-btn', function() {
+  var assetId = $(this).data('id');
+  var confirmation = confirm('Are you sure you want to delete this record?');
+  if (confirmation) {
+    $.ajax({
+      url: '/asset_types/' + assetId + '/delete/',
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function(response) {
+        alert('Record deleted successfully.');
+        $('#asset-type-table').DataTable().ajax.reload();
+      },
+      error: function(xhr, status, error) {
+        alert('An error occurred while deleting the record.');
+      }
+    });
+  }
+});
+
+  </script>
+
+
+
+    <script>
+      function visit(){
+        window.location.href = '/asset_types/' + 'create/';
+      }
+  </script>
+  <button onclick="visit();">create assset types</button>
+  
+{% endblock %}
