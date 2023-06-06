@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Assets by Asset Type</h2><br>
+    <canvas id="asset-chart"></canvas>
+
+    <h2>Active and Inactive Assets</h2>
+    <canvas id="active-inactive-chart"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var assetChartCtx = document.getElementById('asset-chart').getContext('2d');
+            var activeInactiveChartCtx = document.getElementById('active-inactive-chart').getContext('2d');
+
+            var assetChart = new Chart(assetChartCtx, {
+                type: 'pie',
+                data: {
+                    labels: {{ asset_chart.labels|safe }},
+                    datasets: [{
+                        label: 'Number of Assets',
+                        data: {{ asset_chart.datasets.0.data|safe }},
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2
+                    }]
+                }
+            });
+
+            var activeInactiveChart = new Chart(activeInactiveChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: {{ asset_chart_inactive.labels|safe }},
+                    datasets: [{
+                        label: 'Number of Assets',
+                        data: {{ asset_chart_inactive.datasets.0.data|safe }},
+                        backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
