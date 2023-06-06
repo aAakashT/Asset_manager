@@ -27,4 +27,11 @@ urlpatterns = [
     path('asset_types/', AssetTypeListView.as_view(), name='asset_types'),
     path('asset_types/<int:pk>/update/', update_asset_type, name='update_asset_type'),
     path('asset_types/<int:pk>/delete/', delete_asset_type, name='delete_asset_type'),
-]
+    path('assets/create/', create_asset, name='create_asset'),
+    path('assets/data/', AssetListJson.as_view(), name='assets_data'),
+    path('assets/', AssetListView.as_view(), name='assets'),
+    path('assets/<int:id>/delete/', AssetDeleteView.as_view(), name='asset-delete'),
+    path('assets/<int:pk>/update/', update_asset, name='update_asset'),
+    path('assets_image/create/', create_asset_image, name='create_asset_image'),
+    path('assets/download/', download_assets_view, name='download_assets'),
+    ]

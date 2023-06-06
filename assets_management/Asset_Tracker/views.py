@@ -1,8 +1,21 @@
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from .forms import AssetTypeForm, AssetForm, AssetImageForm
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+
+from .forms import AssetForm, AssetImageForm, AssetTypeForm
+
+from django.views import View
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import TemplateView
+from django_datatables_view.base_datatable_view import BaseDatatableView
+
+from .forms import AssetForm, AssetImageForm, AssetTypeForm
+from chartjs.views.lines import BaseLineChartView
+from django.views.generic import TemplateView
+
+from .models import Asset, AssetImage, AssetType
 # Create your views here.
 def login_view(request):
     if request.method == 'POST':
@@ -15,7 +28,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             if not remember_me:
-                request.session.set_expiry(0)  # Set session expiration to browser close
+                request.session.set_expiry(0)
             return redirect('dashboard')
         else:
             messages.error(request, 'Invalid email or password')
@@ -26,9 +39,6 @@ def logout_view(request):
     return redirect('login')
 
 
-from chartjs.views.lines import BaseLineChartView
-from .models import Asset, AssetType, AssetImage
-from django.views.generic import TemplateView
 
 
 
@@ -89,15 +99,6 @@ def create_asset_type(request):
     return render(request, 'create_asset_type.html', {'form': form})
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-
-from .forms import AssetTypeForm, AssetForm, AssetImageForm
-
-from django.http import JsonResponse
-from django.views.generic import TemplateView
-from django_datatables_view.base_datatable_view import BaseDatatableView
-
-
 
 class AssetTypeListJson(BaseDatatableView):
     model = AssetType
@@ -144,4 +145,88 @@ def delete_asset_type(request, pk):
     return render(request, 'delete_asset_type.html', {'asset_type': asset_type})
    
 
+
+# Create operation for Asset
+def create_asset(request):
+    if request.method == 'POST':
+        form = AssetForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('assets')  
+    else:
+        form = AssetForm()
+    return render(request, 'create_asset.html', {'form': form})
+
+class AssetListJson(BaseDatatableView):
+    model = Asset
+    columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', 'image'] 
+    order_columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', 'image'] 
+
+    def render_column(self, row, column):
+        if column == 'actions':
+            return f'<a href="#" class="asset-delete" data-id="{row.pk}">Delete</a>'+\
+              f'<a href="#" class="update_asset" data-id="{row.pk}">update</a>' # added underscoes to delete asset type
+        else:
+            return super().render_column(row, column)
+
+    def get_initial_queryset(self):
+        return self.model.objects.all().prefetch_related('images').order_by('-created_at')
+
+class AssetListView(TemplateView):  
+    template_name = 'asset_list.html'
+
+
+
+
+class AssetDeleteView(View):
+    def get(self, request, id):
+        try:
+            asset = Asset.objects.get(id=id)
+            asset.delete()
+        except Exception:
+            pass
+        return redirect('assets')
+
+# Update operation for Asset
+@login_required
+def update_asset(request, pk):
+    asset = get_object_or_404(Asset, pk=pk)
+    if request.method == 'POST':
+        form = AssetForm(request.POST, instance=asset)
+        if form.is_valid():
+            form.save()
+            return redirect('assets')  
+    else:
+        form = AssetForm(instance=asset)
+    return render(request, 'update_asset.html', {'form': form, 'asset': asset})
+
+@login_required
+def create_asset_image(request):
+    if request.method == 'POST':
+        form = AssetImageForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('assets')  
+    else:
+        form = AssetImageForm()
+    return render(request, 'create_asset_image.html', {'form': form})
+
+import csv
+from django.http import HttpResponse
+
+@login_required
+def download_assets_view(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="assets.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Asset Name', 'Asset Code', 'Asset Type', 'Is Active', 'Created At', 'Updated At'])
+
+    assets = Asset.objects.all().order_by('-created_at')
+
+    for asset in assets:
+        writer.writerow([asset.asset_name, asset.asset_code, asset.asset_type.asset_type,
+                         asset.is_active, asset.created_at, asset.updated_at])
+
+    return response
 
