@@ -22,4 +22,5 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('dashboard/', AssetChartView.as_view(), name='dashboard'),
+    path('asset_types/create/', create_asset_type, name='create_asset_type'),
 ]

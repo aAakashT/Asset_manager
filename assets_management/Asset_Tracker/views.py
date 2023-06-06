@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-
+from .forms import AssetTypeForm, AssetForm, AssetImageForm
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def login_view(request):
     if request.method == 'POST':
@@ -73,3 +74,17 @@ class AssetChartView(TemplateView):
 
 def chart_view(request):
     return render(request, 'chart.html')
+
+
+@login_required
+def create_asset_type(request):
+    if request.method == 'POST':
+        form = AssetTypeForm(request.POST)
+        if form.is_valid():
+            asset_type = form.save()
+            messages.success(request, 'Asset type created successfully.')
+            return redirect('asset_types')
+    else:
+        form = AssetTypeForm() 
+    return render(request, 'create_asset_type.html', {'form': form})
+

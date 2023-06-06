@@ -25,6 +25,10 @@ SECRET_KEY = 'django-insecure-bxx)^mu^wq$$b$r-*y+*^)kk_qwowzx7huw_fto8@l2*^*^3kx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'# versioning issue if 5
+# AUTHENTICATION
+LOGIN_URL =  '/login/'
+LOGOUT_REDIRECT_URL =  '/login/'
 ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'Asset_Tracker.User'
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Asset_Tracker',
+    'chartjs',
 ]
 
 MIDDLEWARE = [
@@ -122,9 +127,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
+STATIC_URL = 'static/'
+STATIC_DIR = BASE_DIR / "static"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = "media/"
+MEDIA_DIR = BASE_DIR / "media"
