@@ -1,0 +1,16 @@
+asgiref==3.7.2
+backports.zoneinfo==0.2.1
+chartjs==1.2
+Django==4.2.1
+django-chartjs==2.3.0
+django-datatables-view==1.20.0
+django-seed==0.3.1
+Faker==18.10.1
+mysql-client==0.0.1
+mysqlclient==2.1.1
+Pillow==9.5.0
+python-dateutil==2.8.2
+six==1.16.0
+sqlparse==0.4.4
+toposort==1.10
+typing-extensions==4.6.3
