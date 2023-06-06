@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'Asset_Tracker_App.User'
+AUTH_USER_MODEL = 'Asset_Tracker.User'
 # Application definition
 
 INSTALLED_APPS = [
@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'assets_management.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'aakash',
+        'NAME': 'aakasht',
         'USER': 'root',
         'PASSWORD': 'aakashthorave',
         'HOST': 'localhost',

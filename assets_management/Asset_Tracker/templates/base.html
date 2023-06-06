@@ -1,0 +1,42 @@
+{% load static %}
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  <!-- <link rel="stylesheet" href="{% static 'js/adminlte.min.js' %}"> -->
+  <!-- <link rel="stylesheet" href="{% static 'css/adminlte.css' %}"> -->
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+
+  <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"> -->
+    <title>
+        {% block title %}
+        
+        {% endblock %}
+    </title>
+</head>
+<body>
+    
+{% block content %}
+
+{% endblock %}
+
+</body>
+
+</html>
+</nav>
+{% if user.is_authenticated %}
+
+<script>
+  function pageredirect(){
+    window.location.href = '/logout/';
+  }
+</script>
+<button onclick="pageredirect();">Logout</button>
+{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
+ 
+

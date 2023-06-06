@@ -35,3 +35,43 @@ class User(AbstractUser):
 
     objects = UserManager()
     
+class AssetType(models.Model):
+    asset_type = models.CharField(max_length=200 ,unique=True)
+    asset_description = models.CharField(max_length=500, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.asset_type
+
+class AssetImage(models.Model):
+    asset = models.ForeignKey(to='Asset', on_delete=models.CASCADE, null=True, blank=True, related_name='images')
+    image = models.ImageField(upload_to='asset_images/')
+
+    def __str__(self):
+        return f"Asset Image: {self.id}"
+
+import secrets
+import string
+# models for asset
+class Asset(models.Model):
+    asset_name = models.CharField(max_length=200)
+    asset_code = models.CharField(max_length=200, unique=True, null=True)
+    asset_type = models.ForeignKey(to=AssetType, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.asset_code:
+            self.asset_code = self.generate_unique_code()
+        super().save(*args, **kwargs)
+
+    def generate_unique_code(self):
+        characters = string.ascii_letters + string.digits
+        unique_code = ''.join(secrets.choice(characters) for _ in range(16))
+        while Asset.objects.filter(asset_code=unique_code).exists():
+            unique_code = ''.join(secrets.choice(characters) for _ in range(16))
+        return unique_code
+    def __str__(self):
+        return self.asset_name
