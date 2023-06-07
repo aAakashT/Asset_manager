@@ -119,7 +119,6 @@ class AssetTypeListJson(BaseDatatableView):
     def get_initial_queryset(self):
         return self.model.objects.all()
 
-
 class AssetTypeListView(TemplateView):  
     template_name = 'list_asset_types.html'
 
@@ -136,13 +135,9 @@ def update_asset_type(request, pk):
     return render(request, 'update_asset_type.html', {'form': form, 'asset_type': asset_type})
 
 class AssetTypeDeleteView(View):
-    def get(self, request, id):
-        asset_type = get_object_or_404(AssetType, id=id)
-        return render(request, 'asset_delete.html', {'asset_type': asset_type})
-
-    def post(self, request, id):
+    def post(self, request, pk):
         try:
-            asset_type = get_object_or_404(AssetType, id=id)
+            asset_type = get_object_or_404(AssetType, id=pk)
             asset_type.delete()
             return redirect('asset_types')  
         except AssetType.DoesNotExist:
