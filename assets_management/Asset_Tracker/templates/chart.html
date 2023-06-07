@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    .chart-container {
+        width: 50%;
+        height: 50%;
+    }
+</style>
     <h2>Assets by Asset Type</h2><br>
     <canvas id="asset-chart"></canvas>
 
     <h2>Active and Inactive Assets</h2>
-    <canvas id="active-inactive-chart"></canvas>
-
+    <!-- <canvas id="active-inactive-chart"></canvas> -->
+    <canvas id="active-inactive-chart" style="width: 10%; height: 10%;"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
