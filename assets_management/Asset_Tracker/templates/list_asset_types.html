@@ -4,7 +4,6 @@
 
 
     <title>Asset Type List</title>
-    <!-- Add your CSS and JavaScript imports here -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script> 
@@ -50,8 +49,6 @@
 // Update Asset Type
 $('#asset-type-table').on('click', '.update-btn', function() {
         var assetId = $(this).data('id');
-        // Redirect to the update page or perform the update action as needed
-        // Example:
         window.location.href = '/asset_types/' + assetId + '/update/';
       });
            

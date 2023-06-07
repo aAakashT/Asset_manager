@@ -16,6 +16,10 @@ from chartjs.views.lines import BaseLineChartView
 from django.views.generic import TemplateView
 
 from .models import Asset, AssetImage, AssetType
+
+import csv
+from django.http import HttpResponse
+
 # Create your views here.
 def login_view(request):
     if request.method == 'POST':
@@ -126,11 +130,10 @@ def update_asset_type(request, pk):
         form = AssetTypeForm(request.POST, instance=asset_type)
         if form.is_valid():
             asset_type = form.save()
-            messages.success(request, 'Asset type updated successfully.')
-            return redirect('list_asset_types')
+            return redirect('asset_types')
     else:
         form = AssetTypeForm(instance=asset_type)
-    return render(request, 'update_asset_type.html', {'form': form})
+    return render(request, 'update_asset_type.html', {'form': form, 'asset_type': asset_type})
 
 @login_required
 def delete_asset_type(request, pk):
@@ -141,9 +144,8 @@ def delete_asset_type(request, pk):
             messages.success(request, 'Asset type and its assets deleted successfully.')
         else:
             messages.info(request, 'Asset type deletion cancelled.')
-        return redirect('list_asset_types')
+        return redirect('asset_types')
     return render(request, 'delete_asset_type.html', {'asset_type': asset_type})
-   
 
 
 # Create operation for Asset
@@ -159,23 +161,32 @@ def create_asset(request):
 
 class AssetListJson(BaseDatatableView):
     model = Asset
-    columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', 'image'] 
-    order_columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', 'image'] 
-
+    columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', '_prefetched_objects_cache'] 
+    order_columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', '_prefetched_objects_cache'] 
+    print(Asset.objects.all().prefetch_related('images').order_by('-created_at'))
     def render_column(self, row, column):
         if column == 'actions':
             return f'<a href="#" class="asset-delete" data-id="{row.pk}">Delete</a>'+\
               f'<a href="#" class="update_asset" data-id="{row.pk}">update</a>' # added underscoes to delete asset type
         else:
             return super().render_column(row, column)
-
+ 
     def get_initial_queryset(self):
+        # for i in self.model.objects.all().prefetch_related('images').order_by('-created_at'):
+            # for j in i.__dict__.get('_prefetched_objects_cache'):
+                # print(j)
+        #         print(i.__dict__)
+        #         print(i._prefetched_objects_cache)
+        #         k = i._prefetched_objects_cache['images']
+        #         for j in k:
+        #             print(j.__dict__)
+        #         print((k)) 
+ 
+        # print(self.model.objects.all().prefetch_related('images').order_by('-created_at'))
         return self.model.objects.all().prefetch_related('images').order_by('-created_at')
 
 class AssetListView(TemplateView):  
     template_name = 'asset_list.html'
-
-
 
 
 class AssetDeleteView(View):
@@ -203,19 +214,19 @@ def update_asset(request, pk):
 @login_required
 def create_asset_image(request):
     if request.method == 'POST':
-        form = AssetImageForm(request.POST)
+        form = AssetImageForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            print("sucess")
             return redirect('assets')  
     else:
         form = AssetImageForm()
     return render(request, 'create_asset_image.html', {'form': form})
 
-import csv
-from django.http import HttpResponse
 
 @login_required
 def download_assets_view(request):
+    
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="assets.csv"'
 

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-bxx)^mu^wq$$b$r-*y+*^)kk_qwowzx7huw_fto8@l2*^*^3kx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'# versioning issue if 5
+# CRISPY_TEMPLATE_PACK = 'bootstrap4'# versioning issue if 5
 # AUTHENTICATION
 LOGIN_URL =  '/login/'
 LOGOUT_REDIRECT_URL =  '/login/'
@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Asset_Tracker',
     'chartjs',
+    'adminlte3',
+    'adminlte3_theme',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Asset_Tracker.middleware.user_middleware',
 ]
 
 ROOT_URLCONF = 'assets_management.urls'
@@ -68,10 +71,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'assets_management.wsgi.application'
 
@@ -128,11 +134,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 
-STATIC_URL = 'static/'
-STATIC_DIR = BASE_DIR / "static"
+STATIC_URL = '/static/'
+STATIC_DIR = BASE_DIR / 'static'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-MEDIA_URL = "media/"
-MEDIA_DIR = BASE_DIR / "media"
+MEDIA_URL = '/media/'
+MEDIA_DIR = BASE_DIR / 'media'
+STATIC_ROOT = '/home/neosoft/assesment_assets_management/assets_management/Asset_Tracker/static/'

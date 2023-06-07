@@ -6,27 +6,44 @@ class AssetForm(forms.ModelForm):
         model = Asset
         fields = ['asset_name', 'asset_type', 'is_active']
 
-    # def clean_asset(self):
-    #     asset = self.cleaned_data['asset']
-    #     # if asset <= 0:
-    #     #     raise forms.ValidationError("Quantity must be a positive number.")
-    #     return asset
-
+    def clean(self):
+        cleaned_data = super().clean()
+        asset_name = cleaned_data['asset_name']
+        asset_type = cleaned_data['asset_type']
+        if asset_name and asset_type:
+                try:
+                    k = type(int(asset_name))
+                    raise forms.ValidationError("please check values.")
+                except ValueError:
+                    return cleaned_data
+        # raise forms.ValidationError("please check values.")
 
 class AssetTypeForm(forms.ModelForm):
     class Meta:
         model = AssetType
         fields = ['asset_type', 'asset_description']
 
-    def clean_asset_type(self):
+    def clean(self):
+        cleaned_data = super().clean()
         asset_type = self.cleaned_data['asset_type']
-        return asset_type
+        return cleaned_data
     
 class AssetImageForm(forms.ModelForm):
     class Meta:
         model = AssetImage
-        fields = ['asset', 'image']
+        fields = '__all__'
 
-    def clean_asset_Image(self):
-        asset_image =self.cleaned_data['image']
-        return asset_image 
+    def clean(self):
+        cleaned_data = super().clean()
+        image = cleaned_data['image']
+        asset = cleaned_data['asset']
+        if image:
+            extension = image.name.split('.')[-1]
+            valid_extensions = ['jpg', 'jpeg', 'png', 'gif']
+            if extension.lower() not in valid_extensions:
+                raise forms.ValidationError("Only JPG, JPEG, PNG, and GIF images are allowed.")
+
+            if image.size > 5 * 1024 * 1024: 
+                raise forms.ValidationError("The image size should not exceed 5MB.")
+
+        return cleaned_data

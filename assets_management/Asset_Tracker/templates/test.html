@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Asset List</h2>
+<table id="asset-table" class="table table-striped">
+    <thead>
+        <tr>          
+            <th>ID</th>
+            <th>asset_name</th>
+            <th>asset_code</th>
+            <th>asset_type</th>
+            <th>is_active</th>
+            <th>created_at</th>
+            <th>updated_at</th>
+            <th>image</th>
+            <th>actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        $('#asset-table').DataTable({ 
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{% url 'test_data' %}",
+            "columns": [
+                {"data": "id"},
+                {"data": "asset_name"},
+                {"data": "asset_code"},
+                {"data": "asset_type"},
+                {"data": "is_actve",
+                render: function(data) {
+                  if (data == 'True') {
+            return 'True';
+          } else {
+            return 'False';}
+          }
+        },
+                {"data": "created_at"},
+                {"data": "updated_at"},
+                {"data": "images"
+                    ,
+                    "render": function(data, type, row) {
+                    var imageHTML = '';
+            if (data.prefetched_objects_cache && data.prefetched_objects_cache.images.length > 0) 
+  {
+    data.prefetched_objects_cache.images.forEach(function(image) {
+      imageHTML += '<img src="' + image.image_url + '" alt="Asset Image">';
+    });
+  }
+  return imageHTML;
+}
+                    },
+                ]
+        }
+        )
+    })
+    {% endblock %}
