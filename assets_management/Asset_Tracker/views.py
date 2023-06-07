@@ -135,19 +135,35 @@ def update_asset_type(request, pk):
         form = AssetTypeForm(instance=asset_type)
     return render(request, 'update_asset_type.html', {'form': form, 'asset_type': asset_type})
 
-@login_required
-def delete_asset_type(request, pk):
-    asset_type = get_object_or_404(AssetType, pk=pk)
-    if request.method == 'POST':
-        if request.POST.get('confirm') == 'yes':
+class AssetTypeDeleteView(View):
+    def get(self, request, id):
+        asset_type = get_object_or_404(AssetType, id=id)
+        return render(request, 'asset_delete.html', {'asset_type': asset_type})
+
+    def post(self, request, id):
+        try:
+            asset_type = get_object_or_404(AssetType, id=id)
             asset_type.delete()
-            messages.success(request, 'Asset type and its assets deleted successfully.')
-        else:
-            messages.info(request, 'Asset type deletion cancelled.')
-        return redirect('asset_types')
-    return render(request, 'delete_asset_type.html', {'asset_type': asset_type})
+            return redirect('asset_types')  
+        except AssetType.DoesNotExist:
+            return redirect('asset_types', error='Asset_Type does not exist')
+        except Exception as e:
+            return redirect('asset_types', error='An error occurred while deleting the asset_type: ' + str(e))
 
+class AssetDeleteView(View):
+    def get(self, request, id):
+        asset = get_object_or_404(Asset, id=id)
+        return render(request, 'asset_delete.html', {'asset': asset})
 
+    def post(self, request, id):
+        try:
+            asset = get_object_or_404(Asset, id=id)
+            asset.delete()
+            return redirect('assets')  
+        except Asset.DoesNotExist:
+            return redirect('assets', error='Asset does not exist')
+        except Exception as e:
+            return redirect('assets', error='An error occurred while deleting the asset: ' + str(e))
 # Create operation for Asset
 def create_asset(request):
     if request.method == 'POST':
@@ -192,7 +208,7 @@ class AssetListView(TemplateView):
 class AssetDeleteView(View):
     def get(self, request, id):
         try:
-            asset = Asset.objects.get(id=id)
+            asset = get_object_or_404(Asset, id=id)
             asset.delete()
         except Exception:
             pass
