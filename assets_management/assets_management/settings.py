@@ -142,4 +142,10 @@ STATIC_DIR = BASE_DIR / 'static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = 'media/'
 MEDIA_DIR = BASE_DIR / 'media'
-STATIC_ROOT = '/home/neosoft/assesment_assets_management/assets_management/static/'
+# STATIC_ROOT = '/home/neosoft/assesment_assets_management/assets_management/static/'
+# SELERY SETTINGS
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json' 
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'

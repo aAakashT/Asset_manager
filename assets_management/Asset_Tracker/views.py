@@ -103,7 +103,6 @@ def create_asset_type(request):
     return render(request, 'create_asset_type.html', {'form': form})
 
 
-
 class AssetTypeListJson(BaseDatatableView):
     model = AssetType
     columns = ['id', 'asset_type', 'description', 'created_at', 'updated_at']
@@ -172,8 +171,8 @@ def create_asset(request):
 
 class AssetListJson(BaseDatatableView):
     model = Asset
-    columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', '_prefetched_objects_cache'] 
-    order_columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', '_prefetched_objects_cache'] 
+    columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', '_prefetched_objects_cache', '_prefetched_objects_cache'] 
+    order_columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', '_prefetched_objects_cache', '_prefetched_objects_cache'] 
     print(Asset.objects.all().prefetch_related('images').order_by('-created_at'))
     def render_column(self, row, column):
         if column == 'actions':
@@ -252,3 +251,10 @@ def download_assets_view(request):
 
     return response
 
+def update_image(request, pk):
+    image = get_object_or_404(AssetImage, pk=pk)
+    if request.method == 'POST':
+        form = AssetImageForm(request.POST, request.FILES, instance=AssetImage)
+        if form.is_valid():
+            return(render, "asset_list")
+        return render('update_asset.html', form=AssetImageForm )

@@ -46,7 +46,7 @@ class AssetType(models.Model):
 
 class AssetImage(models.Model):
     asset = models.ForeignKey(to='Asset', on_delete=models.CASCADE, null=True, blank=True, related_name='images')
-    image = models.ImageField(upload_to='asset_images/')
+    image = models.ImageField(upload_to='media/asset_images/')
 
     def __str__(self):
         return f"Asset Image: {self.id}"
