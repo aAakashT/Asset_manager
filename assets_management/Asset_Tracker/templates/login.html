@@ -6,6 +6,9 @@
 </head>
 <body>
     <h2>Login</h2>
+    {% if user.is_authenticated %}
+    <h4>user is logged in </h4>
+    {% else %}
     {% if messages %}
         {% for message in messages %}
             <p>{{ message }}</p>
@@ -29,6 +32,7 @@
             <button type="submit">Login</button>
         </div>
     </form>
+    {% endif %}
 </body>
 </html>
 {% endblock %}

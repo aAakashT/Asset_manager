@@ -49,9 +49,9 @@ class AssetImage(models.Model):
     image = models.ImageField(upload_to='media/asset_images/')
 
     def __str__(self):
-        return f"Asset Image: {self.id}"
+        return f"Asset Image: {self.image}"
 
-import secrets
+import secrets 
 import string
 # models for asset
 class Asset(models.Model):

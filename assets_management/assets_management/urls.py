@@ -17,24 +17,27 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from Asset_Tracker.views import *
+from django.contrib.auth.decorators import login_required
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
-    path('dashboard/', AssetChartView.as_view(), name='dashboard'),
+    path('dashboard/', login_required(AssetChartView.as_view()), name='dashboard'),
     path('asset_types/create/', create_asset_type, name='create_asset_type'),
     path('asset_types/data/', AssetTypeListJson.as_view(), name='asset_types_data'),
-    path('asset_types/', AssetTypeListView.as_view(), name='asset_types'),
+    path('asset_types/', login_required(AssetTypeListView.as_view()), name='asset_types'),
     path('asset_types/<int:pk>/update/', update_asset_type, name='update_asset_type'),
     path('asset_types/<int:pk>/delete/', AssetTypeDeleteView.as_view(), name='delete_asset_type'),
     path('assets/create/', create_asset, name='create_asset'),
     path('assets/data/', AssetListJson.as_view(), name='assets_data'),
-    path('assets/', AssetListView.as_view(), name='assets'),
+    path('assets/', login_required(AssetListView.as_view()), name='assets'),
     path('assets/<int:id>/delete/', AssetDeleteView.as_view(), name='asset-delete'),
     path('assets/<int:pk>/update/', update_asset, name='update_asset'),
     path('assets_image/create/', create_asset_image, name='create_asset_image'),
     path('assets/download/', download_assets_view, name='download_assets'),
-    ]
+    path('images/data/', ImagesJson.as_view(), name="image_data"),
+    path('image/', login_required(ImageListView.as_view()), name="images") 
+    ] 
 from django.conf import settings
 from django.conf.urls.static import static
 

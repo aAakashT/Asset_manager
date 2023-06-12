@@ -19,15 +19,23 @@ from .models import Asset, AssetImage, AssetType
 
 import csv
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 def login_view(request):
+    # if request.method == 'GET':
+    #     print((request.session.session_key))
+    
+    if request.user.is_authenticated:
+        return redirect('dashboard')    
+    
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
         remember_me = bool(request.POST.get('remember_me'))
 
         user = authenticate(request, email=email, password=password)
+        
 
         if user is not None:
             login(request, user)
@@ -85,7 +93,7 @@ class AssetChartView(TemplateView):
                 'borderWidth': 1,
             }]
         }
-
+@login_required
 def chart_view(request):
     return render(request, 'chart.html')
 
@@ -105,13 +113,13 @@ def create_asset_type(request):
 
 class AssetTypeListJson(BaseDatatableView):
     model = AssetType
-    columns = ['id', 'asset_type', 'description', 'created_at', 'updated_at']
-    order_columns = ['id', 'asset_type', 'description', 'created_at', 'updated_at']
+    columns = ['id', 'asset_type', 'asset_description', 'created_at', 'updated_at']
+    order_columns = ['id', 'asset_type', 'asset_description', 'created_at', 'updated_at']
     max_display_length = 10
     def render_column(self, row, column):
         if column == 'actions':
             return f'<a href="#" class="delete_asset_type" data-id="{row.pk}">Delete</a>'+\
-              f'<a href="#" class="update_asset_type" data-id="{row.pk}">update    </a>' # added underscoes to delete asset type
+              f'<a href="#" class="update_asset_type" data-id="{row.pk}">update</a>' # added underscoes to delete asset type
         else:
             return super().render_column(row, column)
 
@@ -199,14 +207,14 @@ class AssetListView(TemplateView):
     template_name = 'asset_list.html'
 
 
-class AssetDeleteView(View):
-    def get(self, request, id):
-        try:
-            asset = get_object_or_404(Asset, id=id)
-            asset.delete()
-        except Exception:
-            pass
-        return redirect('assets')
+# class AssetDeleteView(View):
+#     def get(self, request, id):
+#         try:
+#             asset = get_object_or_404(Asset, id=id)
+#             asset.delete()
+#         except Exception:
+#             pass
+#         return redirect('assets')
 
 # Update operation for Asset
 @login_required
@@ -258,3 +266,33 @@ def update_image(request, pk):
         if form.is_valid():
             return(render, "asset_list")
         return render('update_asset.html', form=AssetImageForm )
+    
+class ImagesJson(BaseDatatableView):
+    model = AssetImage
+    columns = ['id', 'asset', 'image'] 
+    order_columns = ['id', 'asset', 'image'] 
+    print(AssetImage.objects.all())
+    def render_column(self, row, column):
+        # if column == 'actions':
+        #     return f'<a href="#" class="image-delete" data-id="{row.pk}">Delete</a>'+\
+        #       f'<a href="#" class="update_image" data-id="{row.pk}">update</a>' # added underscoes to delete asset type
+        
+        return super().render_column(row, column)  
+ 
+    def get_initial_queryset(self):
+        # for i in self.model.objects.all().prefetch_related('images').order_by('-created_at'):
+            # for j in i.__dict__.get('_prefetched_objects_cache'):
+                # print(j)
+        #         print(i.__dict__)
+        #         print(i._prefetched_objects_cache)
+        #         k = i._prefetched_objects_cache['images']
+        #         for j in k:
+        #             print(j.__dict__)
+        #         print((k)) 
+ 
+        # print(self.model.objects.all().prefetch_related('images').order_by('-created_at'))
+        return self.model.objects.all()
+
+class ImageListView(TemplateView):  
+    template_name = 'images.html'
+          

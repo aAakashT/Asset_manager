@@ -31,13 +31,13 @@
                 {"data": "asset_name"},
                 {"data": "asset_code"},
                 {"data": "asset_type"},
-                {"data": "is_actve",
-                render: function(data) {
-                  if (data == 'True') {
-            return 'True';
-          } else {
-            return 'False';}
-          }
+                {"data": "is_active",
+          //       render: function(data) {
+          //         if (data == 'true') {
+          //   return 'True';
+          // } else {
+          //   return data;}
+          // }
         },
                 {"data": "created_at"},
                 {"data": "updated_at"},
@@ -46,10 +46,12 @@
   "data": '_prefetched_objects_cache',
   render: function(data, type, row) {
     var imageHTML = '';
-    if (data && data.length > 0) {
-      for (var i = 0; i < data.length; i++) {
-        var imageUrl = data[i].image;
+    var listdata = data.split(",")
+    if ( listdata.length > 0) {
+      for (var i = 0; i < listdata.length; i++) {
+        var imageUrl ='/'+ listdata[i].slice(64, 104);
         imageHTML = '<img src="' + imageUrl + '" alt="Image">';
+        // return listdata[i].slice(63)
       }
     }
     return imageHTML;
@@ -102,4 +104,7 @@ alert('An error occurred while deleting the record.');
       window.location.href = '/assets/create/';
     }
   </script><button onclick="visitPa();">CreateAsset</button></br>
+  {%if error%}
+  {{error}}
+  {%endif%}
 {% endblock %}

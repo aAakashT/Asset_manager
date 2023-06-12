@@ -1,7 +1,41 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
 
-{%block content%}
-    {% for i in obj%}
-    <img src={{i.image.url}} alt="images">
-    {%endfor %}
-{%endblock%}
+{% block content %}
+<h2>Image List</h2>
+<table id="image-table" class="table table-striped">
+    <thead>
+        <tr>          
+            <th>ID</th>
+            <th>asset</th>
+            <th>image</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        $('#image-table').DataTable({ 
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{% url 'image_data' %}",
+            "columns": [
+                {"data": "id"},
+                {"data": "asset"},
+      {
+  "data": 'image',
+  render: function(data, type, row) {
+        var imageUrl = "/"+data;
+        var imageHTML = '<img src="' + imageUrl + '" alt="Image">';
+        return imageHTML ;
+        // return data;
+      }
+    },
+]
+ });
+
+ });
+
+// </script> 
+{% endblock %}
