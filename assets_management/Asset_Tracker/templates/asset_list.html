@@ -1,6 +1,7 @@
 <!-- {% extends 'base.html' %}
 
 {% block content %}  -->
+<div width="20%", height="300%">
 <br>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -10,7 +11,7 @@
 <h2>Asset List</h2>
 <div class="card">
   <div class="card-body">
-<table id="asset-table" class="table table-striped" style="width:80%;">
+<table id="asset-table" class="table table-striped" width="50%", height="20%">
     <thead>
         <tr>          
             <th>ID</th>
@@ -55,7 +56,8 @@
     var listdata = data.split(",")
     if ( listdata.length > 0) {
       for (var i = 0; i < listdata.length; i++) {
-        var imageUrl ='/'+ listdata[i].slice(64, 104);
+        var url = listdata[i].lastIndexOf(".jpeg")
+        var imageUrl ='/'+ listdata[i].slice(64, url+5);
         imageHTML = '<img src="' + imageUrl + '" alt="Image" width="50" height="50">';
         // return listdata[i].slice(63)
       }
@@ -112,5 +114,5 @@ alert('An error occurred while deleting the record.');
   {%if error%}
   {{error}}
   {%endif%}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script></div>
  <!-- {% endblock %}  -->
