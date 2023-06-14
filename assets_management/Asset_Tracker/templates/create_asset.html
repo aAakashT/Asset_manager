@@ -30,7 +30,7 @@
                 {% endif %}
             {% endblock login_errors %}
 
-            {% block login_form %}
+            {% block create_form %}
                 <form action="" method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </form>
-            {% endblock login_form %}
+            {% endblock create_form %}
 
         </div>
     </div>

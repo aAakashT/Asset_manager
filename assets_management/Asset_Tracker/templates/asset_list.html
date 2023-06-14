@@ -86,7 +86,7 @@
   },
 ]
 });
-  
+
 });
 $('#asset-table').on('click', '.update-btn', function() {
         var assetId1 = $(this).data('id');
@@ -117,10 +117,10 @@ alert('An error occurred while deleting the record.');
 });
 </script>  
 <script>
-    function visitPa(){
+    function visitPage(){
       window.location.href = '/assets/create/';
     }
-  </script><button onclick="visitPa();">CreateAsset</button></br>
+  </script><button class="btn btn-primary" onclick="visitPage();" >CreateAsset</button></br>
   {%if error%}
   {{error}}
   {%endif%}
