@@ -19,7 +19,7 @@ from django.urls import path, include
 from Asset_Tracker.views import *
 from django.contrib.auth.decorators import login_required
 urlpatterns = [
-    path('', include('admin_adminlte.urls')),
+    # path('', include('admin_adminlte.urls')),
     path('admin/', admin.site.urls),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),

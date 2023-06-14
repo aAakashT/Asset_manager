@@ -241,7 +241,7 @@ def update_image(request, pk):
     except AssetImage.DoesNotExist:
         return render('asset_list')    
     if request.method == 'POST':
-        form = AssetImageForm(request.POST, request.FILES, instance=AssetImage)
+        form = AssetImageForm(request.POST, request.FILES, instance=image)
         if form.is_valid():
             return(render, "asset_list")
         return render('update_asset.html', form=AssetImageForm )
