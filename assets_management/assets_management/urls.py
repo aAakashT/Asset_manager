@@ -20,6 +20,7 @@ from Asset_Tracker.views import *
 from django.contrib.auth.decorators import login_required
 urlpatterns = [
     # path('', include('admin_adminlte.urls')),
+    path('', login_required(AssetChartView.as_view()), name='dashboard' ),
     path('admin/', admin.site.urls),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
@@ -46,3 +47,4 @@ from django.conf.urls.static import static
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    

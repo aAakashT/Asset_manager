@@ -10,7 +10,7 @@
 <h2>Asset List</h2>
 <div class="card">
   <div class="card-body">
-<table id="asset-table" class="table table-striped" width="50%", height="20%">
+<table id="asset-table" class="table table-striped" style="width:80%;">
     <thead>
         <tr>          
             <th>ID</th>
@@ -56,7 +56,7 @@
     if ( listdata.length > 0) {
       for (var i = 0; i < listdata.length; i++) {
         var imageUrl ='/'+ listdata[i].slice(64, 104);
-        imageHTML = '<img src="' + imageUrl + '" alt="Image">';
+        imageHTML = '<img src="' + imageUrl + '" alt="Image" width="50" height="50">';
         // return listdata[i].slice(63)
       }
     }

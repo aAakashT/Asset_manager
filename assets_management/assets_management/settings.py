@@ -146,6 +146,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_DIR = BASE_DIR / 'media       '
 STATIC_ROOT = '/home/neosoft/assesment_assets_management/assets_management/static/'
+MEDIA_ROOT = '/home/neosoft/assesment_assets_management/assets_management/media/'
 # SELERY SETTINGS
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
