@@ -1,17 +1,16 @@
 <!-- {% extends 'base.html' %}
 
-{% block content %}  -->
-<div width="20%", height="300%">
-<br>
+{% block content %}-->
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-<sript src="static/admin-lte/plugins/datatables/jquery.dataTables.js"></sript> 
+<script src="static/admin-lte/plugins/datatables/jquery.dataTables.js"></script> 
 
 <h2>Asset List</h2>
 <div class="card">
   <div class="card-body">
-<table id="asset-table" class="table table-striped" width="50%", height="20%">
+    <table id="asset-table" class="table table-striped" style="width: 50%; height: 300px;">
+
     <thead>
         <tr>          
             <th>ID</th>
@@ -46,20 +45,33 @@
                 {"data": "asset_code"},
                 {"data": "asset_type"},
                 {"data": "is_active"},
-                {"data": "created_at"},
-                {"data": "updated_at"},
+                {"data": "created_at",
+                render: function(data, type, row) {
+                    var created = data.slice(0,19)
+                    return created
+                  }
+                },
+                {
+                  "data": "updated_at",
+                  render: function(data, type, row) {
+                    var updated = data.slice(0,20)
+                    return updated
+                  }
+                },
 
       {
   "data": '_prefetched_objects_cache',
   render: function(data, type, row) {
     var imageHTML = '';
     var listdata = data.split(",")
+    var hello = '';
     if ( listdata.length > 0) {
       for (var i = 0; i < listdata.length; i++) {
-        var url = listdata[i].lastIndexOf(".jpeg")
-        var imageUrl ='/'+ listdata[i].slice(64, url+5);
-        imageHTML = '<img src="' + imageUrl + '" alt="Image" width="50" height="50">';
-        // return listdata[i].slice(63)
+        var media = listdata[i].lastIndexOf("media")
+        var jepg = listdata[i].lastIndexOf(".jpeg")
+        var imageUrl ='/'+ listdata[i].slice(media, jepg+5);
+        hello += imageUrl
+        imageHTML += '<img src="' + imageUrl + '" alt="Image" width="50" height="50">';
       }
     }
     return imageHTML;
@@ -72,7 +84,6 @@
       '<button class="btn btn-danger delete-btn" data-id="' + row.id + '">Delete</button>';
     }
   },
-
 ]
 });
   
@@ -105,8 +116,7 @@ alert('An error occurred while deleting the record.');
 }
 });
 </script>  
-
-<br><script>
+<script>
     function visitPa(){
       window.location.href = '/assets/create/';
     }
