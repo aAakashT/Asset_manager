@@ -16,7 +16,7 @@ class AssetForm(forms.ModelForm):
                     raise forms.ValidationError("please check values.")
                 except ValueError:
                     return cleaned_data
-        # raise forms.ValidationError("please check values.")
+    
 
 class AssetTypeForm(forms.ModelForm):
     class Meta:

@@ -1,42 +1,31 @@
+import csv
+
+from chartjs.views.lines import BaseLineChartView
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
-
-from .forms import AssetForm, AssetImageForm, AssetTypeForm
-
-from django.views import View
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.generic import TemplateView
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
 from .forms import AssetForm, AssetImageForm, AssetTypeForm
-from chartjs.views.lines import BaseLineChartView
-from django.views.generic import TemplateView
-
 from .models import Asset, AssetImage, AssetType
 
-import csv
-from django.http import HttpResponse
-from django.utils.decorators import method_decorator
-
 # Create your views here.
+
+
 def login_view(request):
-    # if request.method == 'GET':
-    #     print((request.session.session_key))
-    
+    """if user is authenticated then renders dashboard else renders login page"""
     if request.user.is_authenticated:
         return redirect('dashboard')    
-    
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
         remember_me = bool(request.POST.get('remember_me'))
-
         user = authenticate(request, email=email, password=password)
-        
-
         if user is not None:
             login(request, user)
             if not remember_me:
@@ -44,17 +33,14 @@ def login_view(request):
             return redirect('dashboard')
         else:
             messages.error(request, 'Invalid email or password')
-    return render(request, 'login.html')
+    return render(request, 'login_copy.html')
 
 def logout_view(request):
     logout(request)
     return redirect('login')
 
-
-
-
-
 class AssetChartView(TemplateView):
+    """seperating active and inactive using query and rendering them"""
     template_name = 'chart.html'
 
     def get_context_data(self, **kwargs):
@@ -64,6 +50,7 @@ class AssetChartView(TemplateView):
         return context
 
     def get_asset_chart_data(self):
+        # get data with query filter it on count
         asset_types = AssetType.objects.all()
         labels = [asset_type.asset_type for asset_type in asset_types]
         data = [Asset.objects.filter(asset_type=asset_type).count() for asset_type in asset_types]
@@ -97,9 +84,9 @@ class AssetChartView(TemplateView):
 def chart_view(request):
     return render(request, 'chart.html')
 
-
 @login_required
 def create_asset_type(request):
+    """If request is post then after validating data is created and message is sent"""
     if request.method == 'POST':
         form = AssetTypeForm(request.POST)
         if form.is_valid():
@@ -110,8 +97,8 @@ def create_asset_type(request):
         form = AssetTypeForm() 
     return render(request, 'create_asset_type.html', {'form': form})
 
-
 class AssetTypeListJson(BaseDatatableView):
+    """returns json type data with colums on queryset, hit by ajax call"""
     model = AssetType
     columns = ['id', 'asset_type', 'asset_description', 'created_at', 'updated_at']
     order_columns = ['id', 'asset_type', 'asset_description', 'created_at', 'updated_at']
@@ -127,10 +114,12 @@ class AssetTypeListJson(BaseDatatableView):
         return self.model.objects.all()
 
 class AssetTypeListView(TemplateView):  
+    """ connected to assettypelistjson and renders datatable using assettypelistjson"""
     template_name = 'list_asset_types.html'
 
 @login_required
 def update_asset_type(request, pk):
+    """if asset type is not present then will return 404"""
     asset_type = get_object_or_404(AssetType, pk=pk)
     if request.method == 'POST':
         form = AssetTypeForm(request.POST, instance=asset_type)
@@ -153,8 +142,12 @@ class AssetTypeDeleteView(View):
             return redirect('asset_types', error='An error occurred while deleting the asset_type: ' + str(e))
 
 class AssetDeleteView(View):
+    """if asset is not present then gives 404"""
     def get(self, request, id):
-        asset = get_object_or_404(Asset, id=id)
+        try:
+            asset = get_object_or_404(Asset, id=id)
+        except Asset.DoesNotExist:
+            return redirect('assets', error=f'Asset with {id} does not exist')    
         return render(request, 'asset_delete.html', {'asset': asset})
 
     def post(self, request, id):
@@ -168,6 +161,7 @@ class AssetDeleteView(View):
             return redirect('assets', error='An error occurred while deleting the asset: ' + str(e))
 # Create operation for Asset
 def create_asset(request):
+    """fills form with data and validates the data and saves the object"""
     if request.method == 'POST':
         form = AssetForm(request.POST)
         if form.is_valid():
@@ -178,6 +172,7 @@ def create_asset(request):
     return render(request, 'create_asset.html', {'form': form})
 
 class AssetListJson(BaseDatatableView):
+    """renders columns with order column and loads on get initial queryset"""
     model = Asset
     columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', '_prefetched_objects_cache', '_prefetched_objects_cache'] 
     order_columns = ['id', 'asset_name', 'asset_code', 'asset_type', 'is_active', 'created_at', 'updated_at', '_prefetched_objects_cache', '_prefetched_objects_cache'] 
@@ -185,41 +180,24 @@ class AssetListJson(BaseDatatableView):
     def render_column(self, row, column):
         if column == 'actions':
             return f'<a href="#" class="asset-delete" data-id="{row.pk}">Delete</a>'+\
-              f'<a href="#" class="update_asset" data-id="{row.pk}">update</a>' # added underscoes to delete asset type
+              f'<a href="#" class="update_asset" data-id="{row.pk}">update</a>'
         else:
             return super().render_column(row, column)
  
     def get_initial_queryset(self):
-        # for i in self.model.objects.all().prefetch_related('images').order_by('-created_at'):
-            # for j in i.__dict__.get('_prefetched_objects_cache'):
-                # print(j)
-        #         print(i.__dict__)
-        #         print(i._prefetched_objects_cache)
-        #         k = i._prefetched_objects_cache['images']
-        #         for j in k:
-        #             print(j.__dict__)
-        #         print((k)) 
- 
-        # print(self.model.objects.all().prefetch_related('images').order_by('-created_at'))
         return self.model.objects.all().prefetch_related('images').order_by('-created_at')
 
 class AssetListView(TemplateView):  
     template_name = 'asset_list.html'
 
-
-# class AssetDeleteView(View):
-#     def get(self, request, id):
-#         try:
-#             asset = get_object_or_404(Asset, id=id)
-#             asset.delete()
-#         except Exception:
-#             pass
-#         return redirect('assets')
-
 # Update operation for Asset
 @login_required
 def update_asset(request, pk):
-    asset = get_object_or_404(Asset, pk=pk)
+    """ if form is valid then i will update the asset """
+    try:
+        asset = Asset.objects.get(pk=pk)
+    except Asset.DoesNotExist:
+        return redirect('assets')    
     if request.method == 'POST':
         form = AssetForm(request.POST, instance=asset)
         if form.is_valid():
@@ -231,6 +209,7 @@ def update_asset(request, pk):
 
 @login_required
 def create_asset_image(request):
+    """if request is post then cretes asset image else will render the form"""
     if request.method == 'POST':
         form = AssetImageForm(request.POST, request.FILES)
         if form.is_valid():
@@ -243,24 +222,24 @@ def create_asset_image(request):
 
 
 @login_required
-def download_assets_view(request):
-    
+def download_assets_view(request):  
+    """using csv and writerow with list of columns and using for loop to append data and sending as text/csv file respose"""  
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="assets.csv"'
-
     writer = csv.writer(response)
     writer.writerow(['Asset Name', 'Asset Code', 'Asset Type', 'Is Active', 'Created At', 'Updated At'])
-
     assets = Asset.objects.all().order_by('-created_at')
-
     for asset in assets:
         writer.writerow([asset.asset_name, asset.asset_code, asset.asset_type.asset_type,
                          asset.is_active, asset.created_at, asset.updated_at])
-
     return response
 
 def update_image(request, pk):
-    image = get_object_or_404(AssetImage, pk=pk)
+    """try for Asset image if object does not exist then redirects to asset_list"""
+    try:
+        image = AssetImage.objects.get(pk=pk) 
+    except AssetImage.DoesNotExist:
+        return render('asset_list')    
     if request.method == 'POST':
         form = AssetImageForm(request.POST, request.FILES, instance=AssetImage)
         if form.is_valid():
@@ -268,31 +247,18 @@ def update_image(request, pk):
         return render('update_asset.html', form=AssetImageForm )
     
 class ImagesJson(BaseDatatableView):
+    """returns json response with all info about images"""
     model = AssetImage
     columns = ['id', 'asset', 'image'] 
     order_columns = ['id', 'asset', 'image'] 
     print(AssetImage.objects.all())
-    def render_column(self, row, column):
-        # if column == 'actions':
-        #     return f'<a href="#" class="image-delete" data-id="{row.pk}">Delete</a>'+\
-        #       f'<a href="#" class="update_image" data-id="{row.pk}">update</a>' # added underscoes to delete asset type
-        
+    def render_column(self, row, column):    
         return super().render_column(row, column)  
  
     def get_initial_queryset(self):
-        # for i in self.model.objects.all().prefetch_related('images').order_by('-created_at'):
-            # for j in i.__dict__.get('_prefetched_objects_cache'):
-                # print(j)
-        #         print(i.__dict__)
-        #         print(i._prefetched_objects_cache)
-        #         k = i._prefetched_objects_cache['images']
-        #         for j in k:
-        #             print(j.__dict__)
-        #         print((k)) 
- 
-        # print(self.model.objects.all().prefetch_related('images').order_by('-created_at'))
         return self.model.objects.all()
 
 class ImageListView(TemplateView):  
+    """associated with image json"""
     template_name = 'images.html'
           

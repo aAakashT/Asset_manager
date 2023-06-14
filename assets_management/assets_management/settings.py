@@ -33,8 +33,12 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'Asset_Tracker.User'
 # Application definition
-
+LOGIN_REDIRECT_URL = '/'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 INSTALLED_APPS = [
+    'adminlte3',
+    'adminlte3_theme',
+    'admin_adminlte.apps.AdminAdminlteConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,8 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Asset_Tracker',
     'chartjs',
-    'adminlte3',
-    'adminlte3_theme',
+
 ]
 
 MIDDLEWARE = [
@@ -63,7 +66,7 @@ ROOT_URLCONF = 'assets_management.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -142,7 +145,7 @@ STATIC_DIR = BASE_DIR / 'static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_DIR = BASE_DIR / 'media       '
-# STATIC_ROOT = '/home/neosoft/assesment_assets_management/assets_management/static/'
+STATIC_ROOT = '/home/neosoft/assesment_assets_management/assets_management/static/'
 # SELERY SETTINGS
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']

@@ -1,58 +1,68 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div id="container" style="width: 50%;">
+    
 <style>
     .chart-container {
-        width: 10px;
-        height: 10px;
+        display: flex;
+    }
+    .chart-container canvas {
+        width: 50%;
     }
 </style>
+<div id="container">
     <h2>Assets by Asset Type</h2><br>
-    <canvas id="asset-chart" tyle="width: 10px; height: 10px;"></canvas>
+    <div class="chart-container">
+        <canvas id="asset-chart" width="100" height="100"></canvas>
+        <canvas id="active-inactive-chart" width="300" height="200"></canvas>
+    </div>
+</div>
 
-    <h2>Active and Inactive Assets</h2>
-    <!-- <canvas id="active-inactive-chart"></canvas> -->
-    <canvas id="active-inactive-chart" style="width: 10px; height: 10px;"></canvas>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var assetChartCtx = document.getElementById('asset-chart').getContext('2d');
-            var activeInactiveChartCtx = document.getElementById('active-inactive-chart').getContext('2d');
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var assetChartCtx = document.getElementById('asset-chart').getContext('2d');
+        var activeInactiveChartCtx = document.getElementById('active-inactive-chart').getContext('2d');
 
-            var assetChart = new Chart(assetChartCtx, {
-                type: 'pie',
-                data: {
-                    labels: {{ asset_chart.labels|safe }},
-                    datasets: [{
-                        label: 'Number of Assets',
-                        data: {{ asset_chart.datasets.0.data|safe }},
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2
-                    }]
-                }
-            });
+        var assetChart = new Chart(assetChartCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ asset_chart.labels | safe }},
+                datasets: [{
+                    label: 'Number of Assets',
+                    data: {{ asset_chart.datasets.0.data | safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            }
+        });
 
-            var activeInactiveChart = new Chart(activeInactiveChartCtx, {
-                type: 'bar',
-                data: {
-                    labels: {{ asset_chart_inactive.labels|safe }},
-                    datasets: [{
-                        label: 'Number of Assets',
-                        data: {{ asset_chart_inactive.datasets.0.data|safe }},
-                        backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+        var activeInactiveChart = new Chart(activeInactiveChartCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ asset_chart_inactive.labels | safe }},
+                datasets: [{
+                    label: 'Number of Assets',
+                    data: {{ asset_chart_inactive.datasets.0.data | safe }},
+                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
         });
-    </script>
+    });
+</script>
+
 {% endblock %}

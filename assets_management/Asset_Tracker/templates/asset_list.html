@@ -1,7 +1,21 @@
-{% extends 'base.html' %}
+<!-- {% extends 'base.html' %}
 
-{% block content %}
+{% block content %}  -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<sript src="static/admin-lte/plugins/datatables/jquery.dataTables.js"></sript> 
+
 <h2>Asset List</h2>
+<div class="card">
+  <div class="card-body">
 <table id="asset-table" class="table table-striped">
     <thead>
         <tr>          
@@ -18,7 +32,12 @@
     </thead>
     <tbody>
     </tbody>
-</table>
+  </table>
+  
+  </div>
+  </div>   
+  
+
 
 <script>
     $(document).ready(function() {
@@ -31,14 +50,7 @@
                 {"data": "asset_name"},
                 {"data": "asset_code"},
                 {"data": "asset_type"},
-                {"data": "is_active",
-          //       render: function(data) {
-          //         if (data == 'true') {
-          //   return 'True';
-          // } else {
-          //   return data;}
-          // }
-        },
+                {"data": "is_active"},
                 {"data": "created_at"},
                 {"data": "updated_at"},
 
@@ -96,8 +108,7 @@ alert('An error occurred while deleting the record.');
 });
 }
 });
-
-</script> 
+</script>  
 
 <br><script>
     function visitPa(){
@@ -107,4 +118,5 @@ alert('An error occurred while deleting the record.');
   {%if error%}
   {{error}}
   {%endif%}
-{% endblock %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <!-- {% endblock %}  -->
